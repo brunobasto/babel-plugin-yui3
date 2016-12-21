@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "babel src -d build --optional es7.decorators",
-    "compile": "babel features -d demo --optional es7.decorators "
+    "compile": "babel features -d demos --optional es7.decorators "
   },
   "keywords": [
     "babel-plugin",
