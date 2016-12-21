@@ -4,6 +4,10 @@
 
 npm install
 
+## To Build (needed before compiling)
+
+npm run build
+
 ## To Compile
 
 npm run compile
