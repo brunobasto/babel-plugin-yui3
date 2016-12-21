@@ -10,11 +10,11 @@ export default function() {
 	return {
 		visitor: {
 			ClassExpression(path, state) {
-				var classExpression = new ClassTransformer(path, state.file);
+				var classTransformer = new ClassTransformer(path, state.file);
 
-				className = classExpression.getName();
+				className = classTransformer.getName();
 
-				path.replaceWith(classExpression.run());
+				path.replaceWith(classTransformer.build());
 			},
 
 			Program: {
@@ -36,7 +36,7 @@ export default function() {
 					}
 
 					if (body && className) {
-						exposed = t.assignmentExpression("=", t.identifier('Y.' + className), t.identifier(className));
+						exposed = t.assignmentExpression('=', t.identifier('Y.' + className), t.identifier(className));
 
 						path.unshiftContainer('body', add(body, exposed, this.file.opts.basename, requires));
 					}

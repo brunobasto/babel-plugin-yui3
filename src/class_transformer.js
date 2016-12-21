@@ -1,7 +1,7 @@
 /* eslint max-len: 0 */
 
-import { NodePath } from "babel-traverse";
-import * as t from "babel-types";
+import { NodePath } from 'babel-traverse';
+import * as t from 'babel-types';
 
 export default class ClassTransformer {
   constructor(path, file) {
@@ -12,21 +12,17 @@ export default class ClassTransformer {
     this.path = path;
     this.file = file;
     this.body = [];
-    this.classRef = this.node.id ? t.identifier(this.node.id.name) : this.scope.generateUidIdentifier("class");
-    this.superName = this.node.superClass || t.identifier("Function");
-    this.isDerived = !!this.node.superClass;
+    this.classRef = this.node.id ? t.identifier(this.node.id.name) : this.scope.generateUidIdentifier('class');
+    this.superName = this.node.superClass || t.identifier('Function');
+    this.hasSuper = !!this.node.superClass;
   }
 
-  getName() {
-    return this.classRef.name;
-  }
-
-  run() {
+  build() {
+    const closureArgs = [];
+    const closureParams = [];
     let superName = this.superName;
-    let closureParams = [];
-    let closureArgs = [];
 
-    if (this.isDerived) {
+    if (this.hasSuper) {
       closureArgs.push(superName);
 
       superName = this.scope.generateUidIdentifierBasedOnNode(superName);
@@ -35,16 +31,18 @@ export default class ClassTransformer {
       this.superName = superName;
     }
 
-    this.buildBody();
+    const classBody = this.buildClass();
 
-    let container = t.functionExpression(null, closureParams, t.blockStatement(this.body));
+    this.body.push(classBody);
+
+    const container = t.functionExpression(null, closureParams, t.blockStatement(this.body));
 
     return t.callExpression(container, closureArgs);
   }
 
-  buildBody() {
+  buildClass() {
     const body = this.body;
-    const className = this.classRef.name;
+    const className = this.getName();
 
     var baseCreate = t.callExpression(
       t.identifier('Y.Base.create'),
@@ -57,21 +55,24 @@ export default class ClassTransformer {
       ]
     );
 
-    body.push(t.returnStatement(baseCreate));
+    return t.returnStatement(baseCreate);
   }
 
   buildMethods() {
-    const classBodyPaths = this.path.get("body.body");
     const methods = [];
 
-    for (const path of classBodyPaths) {
-      const node = path.node;
+    for (const path of this.path.get('body.body')) {
+      const { node } = path;
 
       if (t.isClassMethod(node)) {
-        methods.push(t.objectMethod("method", node.key, node.params, node.body));
+        methods.push(t.objectMethod('method', node.key, node.params, node.body));
       }
     }
 
     return t.objectExpression(methods);
+  }
+
+  getName() {
+    return this.classRef.name;
   }
 }
