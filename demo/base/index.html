@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test Base Class</title>
+	<script src="http://yui.yahooapis.com/3.18.1/build/yui/yui-min.js"></script>
+	<script src="actual.js"></script>
+</head>
+<body>
+<h1>Test Base Class</h1>
+
+<script type="text/javascript">
+	YUI().use('actual', function(Y) {
+		var baseClassInstance = new Y.MyClass();
+
+		baseClassInstance.method('It worked.');
+	});
+</script>
+</body>
+</html>

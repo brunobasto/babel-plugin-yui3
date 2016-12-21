@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1",
+  "description": "Babel plugin for YUI3",
+  "name": "babel-plugin-yui3",
+  "author": "Bruno Basto",
+  "main": "build/index.js",
+  "dependencies": {
+    "babel-core": "^6.21.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-template": "^6.16.0",
+    "babel-types": "^6.21.0"
+  },
+  "devDependencies": {
+    "babel-register": "^6.7.2",
+    "mocha": "^2.2.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brunobasto/babel-plugin-yui3.git"
+  },
+  "scripts": {
+    "build": "babel src -d build --optional es7.decorators",
+    "compile": "babel features/cases -d demo --optional es7.decorators "
+  },
+  "keywords": [
+    "babel-plugin",
+    "YUI",
+    "YUI3"
+  ]
+}
