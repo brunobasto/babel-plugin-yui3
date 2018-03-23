@@ -9,6 +9,7 @@
 		"liferay"
 	],
 	"globals": {
+		"Y": true
 	},
 	"parser": "babel-eslint",
 	"parserOptions": {
