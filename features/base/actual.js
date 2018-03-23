@@ -5,6 +5,8 @@ import {HSVPalette} from '@yui/aui-color-picker-base';
 import {Component} from '@yui/aui-component';
 // import 'lodash';
 
+const A = 'sadas';
+
 const Augmentation = function() {};
 
 Augmentation.prototype = {
@@ -43,8 +45,33 @@ class MyClass extends MyParentClass {
 	};
 
 	renderUI() {
+		const div = MyClass.CARD;
+
+		this.get('boundingBox').append(div);
 		console.log('static property', MyClass.STATIC_PROPERTY);
-		new HSVPalette().render('body');
+		const pallete = new HSVPalette();
+
+		this.get('boundingBox').append(
+			<div class="thumbnail" style="width: 600px; margin: 20px auto;">
+				<div class="caption">
+					<h3>Thumbnail label</h3>
+					<p>
+						{pallete
+							.render()
+							.get('boundingBox')
+							.getDOM()}
+					</p>
+					<p>
+						<a href="#" class="btn btn-primary">
+							Action
+						</a>{' '}
+						<a href="#" class="btn">
+							Action
+						</a>
+					</p>
+				</div>
+			</div>
+		);
 	}
 
 	method() {

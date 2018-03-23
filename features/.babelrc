@@ -1,6 +1,7 @@
 {
   "presets": ["es2015", "stage-2"],
   "plugins": [
+    "babel-plugin-syntax-jsx", "babel-plugin-jsx-to-dom",
     "../build/index"
-  ]
+  ],
 }
