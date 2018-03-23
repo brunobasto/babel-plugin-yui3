@@ -11,6 +11,11 @@
     "babel-types": "^6.21.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "7.2.3",
+    "eslint": "4.10.0",
+    "eslint-config-liferay": "1.0.2",
+    "prettier-eslint-cli": "^4.7.0",
     "babel-register": "^6.7.2",
     "mocha": "^2.2.5"
   },
@@ -19,6 +24,8 @@
     "url": "https://github.com/brunobasto/babel-plugin-yui3.git"
   },
   "scripts": {
+    "format": "prettier-eslint --write 'src/**/*.js'",
+    "lint": "eslint src/",
     "build": "babel src -d build --optional es7.decorators",
     "compile": "babel features -d demos --optional es7.decorators "
   },
