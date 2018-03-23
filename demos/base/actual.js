@@ -9,7 +9,7 @@ Augmentation.prototype = {
 };
 
 YUI.add('actual', function (Y) {
-	var MyParentClass = MyParentClass = function () {
+	var MyParentClass = function () {
 		return Y.Base.create('MyParentClass', Y.Base, [Augmentation], {
 			superMethod: function superMethod() {
 				console.log('called method from super class!');
@@ -26,9 +26,9 @@ YUI.add('actual', function (Y) {
 		});
 	}();
 
-	var MyClass = MyClass = function (_MyParentClass) {
+	var MyClass = function (_MyParentClass) {
 		return Y.Base.create('MyClass', _MyParentClass, [], {
-			method: function method(param) {
+			method: function method() {
 				var _this = this;
 
 				var arrowFunction = function arrowFunction() {

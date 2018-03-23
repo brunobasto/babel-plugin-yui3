@@ -31,11 +31,7 @@ export default function() {
 					t.variableDeclaration('var', [
 						t.variableDeclarator(
 							t.identifier(classTransformer.getName()),
-							t.assignmentExpression(
-								'=',
-								t.identifier(classTransformer.getName()),
-								classBody
-							)
+							classBody
 						)
 					])
 				);
