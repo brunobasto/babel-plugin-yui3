@@ -43,10 +43,19 @@ export default function() {
 
 			Program: {
 				exit(path) {
+					const body = [];
+					const namedImports = [];
+
 					for (const path of path.get('body')) {
 						const {node} = path;
 
 						if (path.isImportDeclaration() && isYuiImport(node)) {
+							if (path.node.specifiers.length) {
+								path.node.specifiers.forEach(specifier => {
+									namedImports.push(specifier.imported.name);
+								});
+							}
+
 							requires.push(t.stringLiteral(getYuiImport(node)));
 							path.remove();
 						} else if (path.isExportDefaultDeclaration()) {
@@ -67,13 +76,31 @@ export default function() {
 							if (classNames.indexOf(declaration.id.name) > -1) {
 								classDeclarations.push(path.node);
 								path.remove();
+							} else {
+								body.push(path.node);
+								path.remove();
 							}
+						} else {
+							body.push(path.node);
+							path.remove();
 						}
 					}
 
 					path.pushContainer(
 						'body',
 						add(
+							namedImports.map(namedImport => {
+								return t.variableDeclaration('var', [
+									t.variableDeclarator(
+										t.identifier(namedImport),
+										t.memberExpression(
+											t.identifier('Y'),
+											t.identifier(namedImport)
+										)
+									)
+								]);
+							}),
+							body,
 							classDeclarations,
 							exportDeclarations,
 							this.file.opts.basename,

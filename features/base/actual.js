@@ -1,8 +1,10 @@
 'use strict';
 
-import '@yui/base';
+import {Base, Event} from '@yui/base';
 import '@yui/test';
-import 'lodash';
+// import 'lodash';
+
+console.log(Event);
 
 const Augmentation = function() {};
 
@@ -12,7 +14,7 @@ Augmentation.prototype = {
 	}
 };
 
-class MyParentClass {
+class MyParentClass extends Base {
 	static AUGMENTS = [Augmentation];
 
 	static ATTRS = {
