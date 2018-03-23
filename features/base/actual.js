@@ -6,7 +6,7 @@ import 'test';
 const Augmentation = function() {};
 
 Augmentation.prototype = {
-	test: function() {
+	test() {
 		console.log('called method from augmentation');
 	}
 };
@@ -24,7 +24,10 @@ class MyParentClass {
 		console.log('called method from super class!');
 
 		console.log('gonna get attribute from super class:');
-		console.log('got attribute from super class', this.get('parentAttribute'));
+		console.log(
+			'got attribute from super class',
+			this.get('parentAttribute')
+		);
 	}
 }
 
@@ -35,7 +38,7 @@ class MyClass extends MyParentClass {
 		}
 	};
 
-	method(param) {
+	method() {
 		const arrowFunction = () => {
 			console.log('called arrow function!');
 
@@ -56,4 +59,3 @@ class MyClass extends MyParentClass {
 
 export default MyClass;
 export {MyParentClass, MyClass};
-
