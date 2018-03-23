@@ -1,10 +1,9 @@
 'use strict';
 
-import {Base, Event} from '@yui/base';
 import '@yui/test';
+import {HSVPalette} from '@yui/aui-color-picker-base';
+import {Component} from '@yui/aui-component';
 // import 'lodash';
-
-console.log(Event);
 
 const Augmentation = function() {};
 
@@ -14,7 +13,7 @@ Augmentation.prototype = {
 	}
 };
 
-class MyParentClass extends Base {
+class MyParentClass extends Component {
 	static AUGMENTS = [Augmentation];
 
 	static ATTRS = {
@@ -40,6 +39,10 @@ class MyClass extends MyParentClass {
 			value: 'child'
 		}
 	};
+
+	renderUI() {
+		new HSVPalette().render('body');
+	}
 
 	method() {
 		const arrowFunction = () => {

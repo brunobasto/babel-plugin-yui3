@@ -1,21 +1,20 @@
 'use strict';
 
 YUI.add('actual', function (Y) {
-	var Base = Y.Base;
-	var Event = Y.Event;
+	var HSVPalette = Y.HSVPalette;
+	var Component = Y.Component;
 
 	// import 'lodash';
 
-	console.log(Event);
+	var Augmentation = function Augmentation() {};
 
-	var Augmentation = function Augmentation() {};Augmentation.prototype = {
+	Augmentation.prototype = {
 		test: function test() {
 			console.log('called method from augmentation');
 		}
 	};
-
-	var MyParentClass = function (_Base) {
-		return Y.Base.create('MyParentClass', _Base, [Augmentation], {
+	var MyParentClass = function (_Component) {
+		return Y.Base.create('MyParentClass', _Component, [Augmentation], {
 			superMethod: function superMethod() {
 				console.log('called method from super class!');
 
@@ -29,10 +28,13 @@ YUI.add('actual', function (Y) {
 				}
 			}
 		});
-	}(Base);
+	}(Component);
 
 	var MyClass = function (_MyParentClass) {
 		return Y.Base.create('MyClass', _MyParentClass, [], {
+			renderUI: function renderUI() {
+				new HSVPalette().render('body');
+			},
 			method: function method() {
 				var _this = this;
 
@@ -65,5 +67,5 @@ YUI.add('actual', function (Y) {
 	Y.MyParentClass = MyParentClass
 	Y.MyClass = MyClass
 }, '', {
-	'requires': ['base', 'test']
+	'requires': ['test', 'aui-color-picker-base', 'aui-component']
 });
