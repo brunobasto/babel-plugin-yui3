@@ -3,11 +3,19 @@
 import {NodePath} from 'babel-traverse';
 import * as t from 'babel-types';
 
+const findSuperCalls = {
+	Super(path) {
+		if (path.parentPath.isMemberExpression()) {
+			this.push(path.parentPath);
+		}
+	}
+};
+
 export default class ClassTransformer {
 	constructor(path, file) {
 		path = path || NodePath;
 
-		const {scope, node, id, superClass} = path;
+		const {scope, node} = path;
 
 		this.body = [];
 		this.file = file;
@@ -15,11 +23,11 @@ export default class ClassTransformer {
 		this.path = path;
 		this.scope = scope;
 
-		this.classRef = id
-			? t.identifier(id.name)
+		this.classRef = node.id
+			? t.identifier(node.id.name)
 			: this.scope.generateUidIdentifier('class');
-		this.superName = superClass || t.identifier('Function');
-		this.hasSuper = !!superClass;
+		this.superName = node.superClass || t.identifier('Y.Base');
+		this.hasSuper = !!node.superClass;
 	}
 
 	build() {
@@ -58,7 +66,7 @@ export default class ClassTransformer {
 			this.superName,
 			t.arrayExpression([]),
 			this.buildMethods(),
-			t.objectExpression([])
+			this.buildAttrs()
 		]);
 
 		return t.returnStatement(baseCreate);
@@ -71,6 +79,26 @@ export default class ClassTransformer {
 			const {node} = path;
 
 			if (t.isClassMethod(node)) {
+				const superClassMethodCalls = [];
+				path.traverse(findSuperCalls, superClassMethodCalls);
+
+				superClassMethodCalls.forEach(superPath => {
+					const methodName = superPath.container.callee.property.name;
+
+					const applyMethod = t.identifier(
+						`${this.getName()}.superclass.${methodName}.apply`
+					);
+
+					superPath.parentPath.replaceWith(
+						t.callExpression(applyMethod, [
+							t.identifier('this'),
+							t.arrayExpression(
+								superPath.parentPath.parent.expression.arguments
+							)
+						])
+					);
+				});
+
 				methods.push(
 					t.objectMethod('method', node.key, node.params, node.body)
 				);
@@ -78,6 +106,20 @@ export default class ClassTransformer {
 		}
 
 		return t.objectExpression(methods);
+	}
+
+	buildAttrs() {
+		for (const path of this.path.get('body.body')) {
+			const {node} = path;
+
+			if (t.isClassProperty(node) && node.key.name === 'ATTRS') {
+				return t.objectExpression([
+					t.objectProperty(node.key, node.value)
+				]);
+			}
+		}
+
+		return t.objectExpression([]);
 	}
 
 	getName() {
