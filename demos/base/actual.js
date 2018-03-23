@@ -1,10 +1,21 @@
 'use strict';
 
+var Augmentation = function Augmentation() {};
+
+Augmentation.prototype = {
+	test: function test() {
+		console.log('called method from augmentation');
+	}
+};
+
 YUI.add('actual', function (Y) {
 	var MyParentClass = MyParentClass = function () {
-		return Y.Base.create('MyParentClass', Y.Base, [], {
+		return Y.Base.create('MyParentClass', Y.Base, [Augmentation], {
 			superMethod: function superMethod() {
-				console.log('got parentAttribute', this.get('parentAttribute'));
+				console.log('called method from super class!');
+
+				console.log('gonna get attribute from super class:');
+				console.log('got attribute from super class', this.get('parentAttribute'));
 			}
 		}, {
 			ATTRS: {
@@ -21,11 +32,20 @@ YUI.add('actual', function (Y) {
 				var _this = this;
 
 				var arrowFunction = function arrowFunction() {
-					console.log('got childAttribute', _this.get('childAttribute'));
+					console.log('called arrow function!');
+
+					console.log('gonna get attribute from arrow function:');
+					console.log('got attribute', _this.get('childAttribute'));
 				};
+
+				console.log('gonna call arrow function');
 				arrowFunction();
+
+				console.log('gonna call method from super class:');
 				MyClass.superclass.superMethod.apply(this, [true, false]);
-				console.log('called method with param:', param);
+
+				console.log('gonna call method from augmentation:');
+				this.test();
 			}
 		}, {
 			ATTRS: {
