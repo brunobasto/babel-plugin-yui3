@@ -121,17 +121,17 @@ export default class ClassTransformer {
 	}
 
 	buildAttrs() {
+		const statics = [];
+
 		for (const path of this.path.get('body.body')) {
 			const {node} = path;
 
-			if (t.isClassProperty(node) && node.key.name === 'ATTRS') {
-				return t.objectExpression([
-					t.objectProperty(node.key, node.value)
-				]);
+			if (t.isClassProperty(node) && node.key.name !== 'AUGMENTS') {
+				statics.push(t.objectProperty(node.key, node.value));
 			}
 		}
 
-		return t.objectExpression([]);
+		return t.objectExpression(statics);
 	}
 
 	getName() {

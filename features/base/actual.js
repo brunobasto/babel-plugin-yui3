@@ -34,6 +34,8 @@ class MyParentClass extends Component {
 }
 
 class MyClass extends MyParentClass {
+	static STATIC_PROPERTY = {test: true};
+
 	static ATTRS = {
 		childAttribute: {
 			value: 'child'
@@ -41,6 +43,7 @@ class MyClass extends MyParentClass {
 	};
 
 	renderUI() {
+		console.log('static property', MyClass.STATIC_PROPERTY);
 		new HSVPalette().render('body');
 	}
 

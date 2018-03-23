@@ -33,6 +33,7 @@ YUI.add('actual', function (Y) {
 	var MyClass = function (_MyParentClass) {
 		return Y.Base.create('MyClass', _MyParentClass, [], {
 			renderUI: function renderUI() {
+				console.log('static property', MyClass.STATIC_PROPERTY);
 				new HSVPalette().render('body');
 			},
 			method: function method() {
@@ -55,6 +56,7 @@ YUI.add('actual', function (Y) {
 				this.test();
 			}
 		}, {
+			STATIC_PROPERTY: { test: true },
 			ATTRS: {
 				childAttribute: {
 					value: 'child'
