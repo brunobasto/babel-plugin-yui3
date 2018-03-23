@@ -1,18 +1,21 @@
 'use strict';
 
-require('lodash');
-
-var Augmentation = function Augmentation() {};
-
-Augmentation.prototype = {
-	test: function test() {
-		console.log('called method from augmentation');
-	}
-};
-
 YUI.add('actual', function (Y) {
-	var MyParentClass = function () {
-		return Y.Base.create('MyParentClass', Y.Base, [Augmentation], {
+	var Base = Y.Base;
+	var Event = Y.Event;
+
+	// import 'lodash';
+
+	console.log(Event);
+
+	var Augmentation = function Augmentation() {};Augmentation.prototype = {
+		test: function test() {
+			console.log('called method from augmentation');
+		}
+	};
+
+	var MyParentClass = function (_Base) {
+		return Y.Base.create('MyParentClass', _Base, [Augmentation], {
 			superMethod: function superMethod() {
 				console.log('called method from super class!');
 
@@ -26,7 +29,7 @@ YUI.add('actual', function (Y) {
 				}
 			}
 		});
-	}();
+	}(Base);
 
 	var MyClass = function (_MyParentClass) {
 		return Y.Base.create('MyClass', _MyParentClass, [], {
