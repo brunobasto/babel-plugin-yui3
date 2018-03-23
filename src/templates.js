@@ -1,7 +1,7 @@
 import template from 'babel-template';
 import * as types from 'babel-types';
 
-let addTemplate = template(`
+const addTemplate = template(`
   YUI.add(MODULE_NAME_STRING, function(Y) {
     MODULE_BODY
 
@@ -12,10 +12,10 @@ let addTemplate = template(`
 `);
 
 export function add(body, exposed, name, requires) {
-  return addTemplate({
-    EXPOSED: exposed,
-    MODULE_BODY: body,
-    MODULE_NAME_STRING: types.stringLiteral(name),
-    MODULE_REQUIRES: types.arrayExpression(requires)
-  });
-};
+	return addTemplate({
+		EXPOSED: exposed,
+		MODULE_BODY: body,
+		MODULE_NAME_STRING: types.stringLiteral(name),
+		MODULE_REQUIRES: types.arrayExpression(requires)
+	});
+}
