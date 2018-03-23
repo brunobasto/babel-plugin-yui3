@@ -7,27 +7,31 @@ export default class ClassTransformer {
 	constructor(path, file) {
 		path = path || NodePath;
 
-		this.scope = path.scope;
-		this.node = path.node;
-		this.path = path;
-		this.file = file;
+		const {scope, node, id, superClass} = path;
+
 		this.body = [];
-		this.classRef = this.node.id
-			? t.identifier(this.node.id.name)
+		this.file = file;
+		this.node = node;
+		this.path = path;
+		this.scope = scope;
+
+		this.classRef = id
+			? t.identifier(id.name)
 			: this.scope.generateUidIdentifier('class');
-		this.superName = this.node.superClass || t.identifier('Function');
-		this.hasSuper = !!this.node.superClass;
+		this.superName = superClass || t.identifier('Function');
+		this.hasSuper = !!superClass;
 	}
 
 	build() {
 		const closureArgs = [];
 		const closureParams = [];
-		let superName = this.superName;
+		const {body, hasSuper, scope} = this;
+		let {superName} = this;
 
-		if (this.hasSuper) {
+		if (hasSuper) {
 			closureArgs.push(superName);
 
-			superName = this.scope.generateUidIdentifierBasedOnNode(superName);
+			superName = scope.generateUidIdentifierBasedOnNode(superName);
 			closureParams.push(superName);
 
 			this.superName = superName;
@@ -35,12 +39,12 @@ export default class ClassTransformer {
 
 		const classBody = this.buildClass();
 
-		this.body.push(classBody);
+		body.push(classBody);
 
 		const container = t.functionExpression(
 			null,
 			closureParams,
-			t.blockStatement(this.body)
+			t.blockStatement(body)
 		);
 
 		return t.callExpression(container, closureArgs);
