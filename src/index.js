@@ -1,6 +1,6 @@
 import * as t from 'babel-types';
 import ClassTransformer from './class_transformer';
-import {add} from './templates';
+import {addPost} from './templates';
 
 function exportClassName(className) {
 	return t.assignmentExpression(
@@ -15,6 +15,7 @@ const isYuiImport = node => node.source.value.startsWith('@yui');
 const getYuiImport = node => node.source.value.replace('@yui/', '');
 
 export default function() {
+	let isAddYui = false;
 	const requires = [];
 	const classNames = [];
 	const classDeclarations = [];
@@ -22,6 +23,12 @@ export default function() {
 
 	return {
 		visitor: {
+			ImportDeclaration(path) {
+				if (isYuiImport(path.node)) {
+					isAddYui = true;
+				}
+			},
+
 			Class(path, state) {
 				const classTransformer = new ClassTransformer(path, state.file);
 
@@ -29,20 +36,24 @@ export default function() {
 
 				const classBody = classTransformer.build();
 
-				path.remove();
+				const classDeclaration = t.variableDeclaration('var', [
+					t.variableDeclarator(
+						t.identifier(classTransformer.getName()),
+						classBody
+					)
+				]);
 
-				classDeclarations.push(
-					t.variableDeclaration('var', [
-						t.variableDeclarator(
-							t.identifier(classTransformer.getName()),
-							classBody
-						)
-					])
-				);
+				path.replaceWith(classDeclaration);
+
+				classDeclarations.push(classDeclaration);
 			},
 
 			Program: {
 				exit(path) {
+					if (!isAddYui) {
+						return;
+					}
+
 					const body = [];
 					const namedImports = [];
 
@@ -71,24 +82,18 @@ export default function() {
 								})
 							);
 							path.remove();
-						} else if (path.isVariableDeclaration()) {
-							const declaration = path.node.declarations[0];
-							if (classNames.indexOf(declaration.id.name) > -1) {
-								classDeclarations.push(path.node);
-								path.remove();
-							} else {
+						} else {
+							if (!path.isImportDeclaration()) {
 								body.push(path.node);
 								path.remove();
 							}
-						} else {
-							body.push(path.node);
-							path.remove();
 						}
 					}
 
 					path.pushContainer(
 						'body',
-						add(
+						addPost(
+							this.file.opts.basename,
 							namedImports.map(namedImport => {
 								return t.variableDeclaration('var', [
 									t.variableDeclarator(
@@ -101,12 +106,12 @@ export default function() {
 								]);
 							}),
 							body,
-							classDeclarations,
 							exportDeclarations,
-							this.file.opts.basename,
 							requires
 						)
 					);
+
+					isAddYui = false;
 				}
 			}
 		}
