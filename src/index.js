@@ -69,8 +69,6 @@ export default function() {
 								classDeclarations.push(path.node);
 								path.remove();
 							}
-						} else {
-							console.log(node);
 						}
 					}
 
