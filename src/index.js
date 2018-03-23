@@ -10,6 +10,10 @@ function exportClassName(className) {
 	);
 }
 
+const isYuiImport = node => node.source.value.startsWith('@yui');
+
+const getYuiImport = node => node.source.value.replace('@yui/', '');
+
 export default function() {
 	const requires = [];
 	const classNames = [];
@@ -42,20 +46,19 @@ export default function() {
 					for (const path of path.get('body')) {
 						const {node} = path;
 
-						if (path.isImportDeclaration()) {
-							requires.push(t.stringLiteral(node.source.value));
+						if (path.isImportDeclaration() && isYuiImport(node)) {
+							requires.push(t.stringLiteral(getYuiImport(node)));
 							path.remove();
 						} else if (path.isExportDefaultDeclaration()) {
-							exportDeclarations.push(
-								exportClassName(path.node.declaration.name)
-							);
+							const className = path.node.declaration.name;
+
+							exportDeclarations.push(exportClassName(className));
 							path.remove();
 						} else if (path.isExportNamedDeclaration()) {
 							exportDeclarations.push(
 								...path.node.specifiers.map(specifier => {
-									return exportClassName(
-										specifier.local.name
-									);
+									const className = specifier.local.name;
+									return exportClassName(className);
 								})
 							);
 							path.remove();

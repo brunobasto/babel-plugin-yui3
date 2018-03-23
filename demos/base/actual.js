@@ -1,5 +1,7 @@
 'use strict';
 
+require('lodash');
+
 var Augmentation = function Augmentation() {};
 
 Augmentation.prototype = {

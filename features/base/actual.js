@@ -1,7 +1,8 @@
 'use strict';
 
-import 'base';
-import 'test';
+import '@yui/base';
+import '@yui/test';
+import 'lodash';
 
 const Augmentation = function() {};
 
