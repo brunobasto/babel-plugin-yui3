@@ -23,12 +23,6 @@ export default function() {
 
 	return {
 		visitor: {
-			ImportDeclaration(path) {
-				if (isYuiImport(path.node)) {
-					isAddYui = true;
-				}
-			},
-
 			Class(path, state) {
 				const classTransformer = new ClassTransformer(path, state.file);
 
@@ -46,6 +40,12 @@ export default function() {
 				path.replaceWith(classDeclaration);
 
 				classDeclarations.push(classDeclaration);
+			},
+
+			ImportDeclaration(path) {
+				if (isYuiImport(path.node)) {
+					isAddYui = true;
+				}
 			},
 
 			Program: {
