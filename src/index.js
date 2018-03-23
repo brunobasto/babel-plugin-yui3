@@ -74,7 +74,7 @@ export default function() {
 						}
 					}
 
-					path.unshiftContainer(
+					path.pushContainer(
 						'body',
 						add(
 							classDeclarations,

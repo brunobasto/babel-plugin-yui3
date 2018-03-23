@@ -64,7 +64,7 @@ export default class ClassTransformer {
 		const baseCreate = t.callExpression(t.identifier('Y.Base.create'), [
 			t.stringLiteral(className),
 			this.superName,
-			t.arrayExpression([]),
+			this.buildAugments(),
 			this.buildMethods(),
 			this.buildAttrs()
 		]);
@@ -106,6 +106,18 @@ export default class ClassTransformer {
 		}
 
 		return t.objectExpression(methods);
+	}
+
+	buildAugments() {
+		for (const path of this.path.get('body.body')) {
+			const {node} = path;
+
+			if (t.isClassProperty(node) && node.key.name === 'AUGMENTS') {
+				return node.value;
+			}
+		}
+
+		return t.arrayExpression([]);
 	}
 
 	buildAttrs() {
