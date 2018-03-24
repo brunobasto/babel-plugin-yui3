@@ -20,6 +20,7 @@ export default function() {
 	const classNames = [];
 	const classDeclarations = [];
 	const exportDeclarations = [];
+	let moduleName;
 
 	return {
 		visitor: {
@@ -36,6 +37,10 @@ export default function() {
 						classBody
 					)
 				]);
+
+				if (yuiClass.hasModuleName()) {
+					moduleName = yuiClass.getModuleName();
+				}
 
 				path.replaceWith(classDeclaration);
 
@@ -93,7 +98,7 @@ export default function() {
 					path.pushContainer(
 						'body',
 						addPost(
-							this.file.opts.basename,
+							moduleName || this.file.opts.basename,
 							namedImports.map(namedImport => {
 								return t.variableDeclaration('var', [
 									t.variableDeclarator(

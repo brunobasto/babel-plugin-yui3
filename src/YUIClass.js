@@ -12,13 +12,12 @@ const findSuperCalls = {
 };
 
 export default class ClassTransformer {
-	constructor(path, file) {
+	constructor(path) {
 		path = path || NodePath;
 
 		const {scope, node} = path;
 
 		this.body = [];
-		this.file = file;
 		this.node = node;
 		this.path = path;
 		this.scope = scope;
@@ -119,6 +118,27 @@ export default class ClassTransformer {
 		}
 
 		return t.objectExpression(statics);
+	}
+
+	hasModuleName() {
+		return this.getModuleName() !== null;
+	}
+
+	getModuleName() {
+		if (!this.node.decorators) {
+			return null;
+		}
+
+		const moduleNameExpression = this.node.decorators
+			.filter(decorator => t.isCallExpression(decorator.expression))
+			.map(decorator => decorator.expression)
+			.find(expression => expression.callee.name === 'moduleName');
+
+		if (moduleNameExpression.arguments.length > 0) {
+			return moduleNameExpression.arguments[0].value;
+		}
+
+		return null;
 	}
 
 	getName() {
