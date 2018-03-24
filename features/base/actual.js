@@ -22,7 +22,13 @@ class MyParentClass extends Component {
 		}
 	};
 
-	superMethod() {
+	getObject() {
+		return {
+			value: 'parent value'
+		};
+	}
+
+	callSuperVoid() {
 		console.log('called method from super class!');
 
 		console.log('gonna get attribute from super class:');
@@ -42,9 +48,19 @@ class MyClass extends MyParentClass {
 		}
 	};
 
+	getObject() {
+		return {
+			...super.getObject(),
+			value: 'child value'
+		};
+	}
+
 	renderUI() {
 		console.log('static property', MyClass.STATIC_PROPERTY);
+
 		new HSVPalette().render('body');
+
+		console.log(this.getObject());
 	}
 
 	method() {
@@ -59,7 +75,7 @@ class MyClass extends MyParentClass {
 		arrowFunction();
 
 		console.log('gonna call method from super class:');
-		super.superMethod(true, false);
+		super.callSuperVoid(true, false);
 
 		console.log('gonna call method from augmentation:');
 		this.test();

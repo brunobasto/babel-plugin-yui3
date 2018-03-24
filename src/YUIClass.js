@@ -82,22 +82,9 @@ export default class ClassTransformer {
 				const superClassMethodCalls = [];
 				path.traverse(findSuperCalls, superClassMethodCalls);
 
-				superClassMethodCalls.forEach(superPath => {
-					const methodName = superPath.container.callee.property.name;
-
-					const applyMethod = t.identifier(
-						`${this.getName()}.superclass.${methodName}.apply`
-					);
-
-					superPath.parentPath.replaceWith(
-						t.callExpression(applyMethod, [
-							t.identifier('this'),
-							t.arrayExpression(
-								superPath.parentPath.parent.expression.arguments
-							)
-						])
-					);
-				});
+				superClassMethodCalls.forEach(superPath =>
+					this.replaceSuperCall(superPath)
+				);
 
 				methods.push(
 					t.objectMethod('method', node.key, node.params, node.body)
@@ -136,5 +123,22 @@ export default class ClassTransformer {
 
 	getName() {
 		return this.classRef.name;
+	}
+
+	replaceSuperCall(superPath) {
+		const methodName = superPath.container.callee.property.name;
+
+		const applyMethod = t.identifier(
+			`${this.getName()}.superclass.${methodName}.apply`
+		);
+
+		const args = superPath.container.arguments;
+
+		superPath.parentPath.replaceWith(
+			t.callExpression(applyMethod, [
+				t.identifier('this'),
+				t.arrayExpression(args)
+			])
+		);
 	}
 }

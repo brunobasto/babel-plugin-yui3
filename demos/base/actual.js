@@ -4,6 +4,20 @@ YUI.add('actual', function (Y) {
 	var HSVPalette = Y.HSVPalette;
 	var Component = Y.Component;
 
+	var _extends = Object.assign || function (target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+
+		return target;
+	};
+
 	// import 'lodash';
 
 	var Augmentation = function Augmentation() {};
@@ -15,7 +29,12 @@ YUI.add('actual', function (Y) {
 	};
 	var MyParentClass = function (_Component) {
 		return Y.Base.create('MyParentClass', _Component, [Augmentation], {
-			superMethod: function superMethod() {
+			getObject: function getObject() {
+				return {
+					value: 'parent value'
+				};
+			},
+			callSuperVoid: function callSuperVoid() {
 				console.log('called method from super class!');
 
 				console.log('gonna get attribute from super class:');
@@ -32,9 +51,17 @@ YUI.add('actual', function (Y) {
 
 	var MyClass = function (_MyParentClass) {
 		return Y.Base.create('MyClass', _MyParentClass, [], {
+			getObject: function getObject() {
+				return _extends({}, MyClass.superclass.getObject.apply(this, []), {
+					value: 'child value'
+				});
+			},
 			renderUI: function renderUI() {
 				console.log('static property', MyClass.STATIC_PROPERTY);
+
 				new HSVPalette().render('body');
+
+				console.log(this.getObject());
 			},
 			method: function method() {
 				var _this = this;
@@ -50,7 +77,7 @@ YUI.add('actual', function (Y) {
 				arrowFunction();
 
 				console.log('gonna call method from super class:');
-				MyClass.superclass.superMethod.apply(this, [true, false]);
+				MyClass.superclass.callSuperVoid.apply(this, [true, false]);
 
 				console.log('gonna call method from augmentation:');
 				this.test();

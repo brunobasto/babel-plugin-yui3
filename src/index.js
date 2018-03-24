@@ -1,5 +1,5 @@
 import * as t from 'babel-types';
-import ClassTransformer from './class_transformer';
+import YUIClass from './YUIClass';
 import {addPost} from './templates';
 
 function exportClassName(className) {
@@ -24,15 +24,15 @@ export default function() {
 	return {
 		visitor: {
 			Class(path, state) {
-				const classTransformer = new ClassTransformer(path, state.file);
+				const yuiClass = new YUIClass(path, state.file);
 
-				classNames.push(classTransformer.getName());
+				classNames.push(yuiClass.getName());
 
-				const classBody = classTransformer.build();
+				const classBody = yuiClass.build();
 
 				const classDeclaration = t.variableDeclaration('var', [
 					t.variableDeclarator(
-						t.identifier(classTransformer.getName()),
+						t.identifier(yuiClass.getName()),
 						classBody
 					)
 				]);
