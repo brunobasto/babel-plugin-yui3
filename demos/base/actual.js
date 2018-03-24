@@ -1,6 +1,6 @@
 'use strict';
 
-YUI.add('actual', function (Y) {
+YUI.add('liferay-ddm-form-field-checkbox', function (Y) {
 	var HSVPalette = Y.HSVPalette;
 	var Component = Y.Component;
 

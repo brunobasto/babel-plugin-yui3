@@ -13,6 +13,8 @@ Augmentation.prototype = {
 	}
 };
 
+// eslint-disable-next-line
+@moduleName('liferay-ddm-form-field-checkbox')
 class MyParentClass extends Component {
 	static AUGMENTS = [Augmentation];
 
